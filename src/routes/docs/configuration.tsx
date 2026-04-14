@@ -5,7 +5,7 @@ export const Route = createFileRoute("/docs/configuration")({
   head: () => ({
     meta: pageMeta(
       "Configuration - Labonair Docs",
-      "Configure Labonair via config.json, environment variables, and CLI overrides.",
+      "All Labonair-specific settings for The Shelf, Inline Blame, AI providers, and more.",
     ),
   }),
   component: Configuration,
@@ -17,290 +17,134 @@ function Configuration() {
       <div>
         <h1 className="text-3xl font-medium font-title mb-4">Configuration</h1>
         <p className="text-white/60 leading-relaxed">
-          Labonair loads configuration from a single JSON file in your Labonair home directory, with
-          optional environment variable and CLI overrides.
+          Labonair extends VS Code's{" "}
+          <code className="font-mono">settings.json</code> with a set of{" "}
+          <code className="font-mono">labonair.*</code> namespaced settings. Open settings via the
+          Profile icon (top right) → Settings, or press{" "}
+          <code className="font-mono">⌘,</code>.
         </p>
       </div>
 
       <section className="space-y-4">
-        <h2 className="text-xl font-medium">Where config lives</h2>
+        <h2 className="text-xl font-medium">Settings file location</h2>
         <p className="text-white/60 leading-relaxed">
-          By default, Labonair uses <code className="font-mono">~/.labonair</code> as its home directory.
-          The configuration file is:
+          User settings are stored at:
         </p>
-        <div className="bg-card border border-border rounded-lg p-4 font-mono text-sm">
-          <span className="text-muted-foreground select-none">$ </span>
-          <span>~/.labonair/config.json</span>
+        <div className="bg-card border border-border rounded-lg p-4 font-mono text-sm space-y-1 text-white/70">
+          <p>macOS: <span className="text-white/50">~/Library/Application Support/Labonair/User/settings.json</span></p>
+          <p>Windows: <span className="text-white/50">%APPDATA%\Labonair\User\settings.json</span></p>
+          <p>Linux: <span className="text-white/50">~/.config/Labonair/User/settings.json</span></p>
         </div>
         <p className="text-white/60 leading-relaxed">
-          You can change the home directory by setting <code className="font-mono">LABONAIR_HOME</code>{" "}
-          or passing <code className="font-mono">--home</code> to{" "}
-          <code className="font-mono">labonair daemon start</code>.
+          All user data (config, themes, keybindings) lives in{" "}
+          <code className="font-mono">~/.labonair/</code> on macOS and Linux.
         </p>
       </section>
 
       <section className="space-y-4">
-        <h2 className="text-xl font-medium">Precedence</h2>
-        <p className="text-white/60 leading-relaxed">Labonair merges configuration in this order:</p>
-        <ol className="text-white/60 space-y-2 list-decimal list-inside">
-          <li>Defaults</li>
-          <li>
-            <code className="font-mono">config.json</code>
-          </li>
-          <li>Environment variables</li>
-          <li>CLI flags</li>
-        </ol>
+        <h2 className="text-xl font-medium">The Shelf</h2>
         <p className="text-white/60 leading-relaxed">
-          Lists append across sources (for example, <code className="font-mono">allowedHosts</code>{" "}
-          and
-          <code className="font-mono">cors.allowedOrigins</code>).
-        </p>
-      </section>
-
-      <section className="space-y-4">
-        <h2 className="text-xl font-medium">Example</h2>
-        <p className="text-white/60 leading-relaxed">
-          Minimal example that configures listening address, host allowlist, provider keys, and MCP:
+          Configure how many files can be pinned, whether the shelf appears in the status bar, and
+          more.
         </p>
         <pre className="bg-card border border-border rounded-lg p-4 font-mono text-sm overflow-x-auto text-white/80">
           {`{
-  "$schema": "https://labonair.sh/schemas/labonair.config.v1.json",
-  "version": 1,
-  "providers": {
-    "openai": { "apiKey": "..." }
-  },
-  "daemon": {
-    "listen": "127.0.0.1:6767",
-    "allowedHosts": ["localhost", ".localhost"],
-    "mcp": { "enabled": true }
-  }
+  "labonair.shelf.enabled": true,
+  "labonair.shelf.limit": 5,
+  "labonair.shelf.showInStatusBar": true
 }`}
         </pre>
-      </section>
-
-      <section className="space-y-4">
-        <h2 className="text-xl font-medium">Agent provider runtime settings</h2>
-        <p className="text-white/60 leading-relaxed">
-          Use <code className="font-mono">agents.providers</code> to customize how Labonair launches
-          agent provider CLIs. This works for <code className="font-mono">claude</code>,{" "}
-          <code className="font-mono">codex</code>, and
-          <code className="font-mono"> opencode</code>.
-        </p>
-        <p className="text-white/60 leading-relaxed">
-          <code className="font-mono">command.mode</code> can be{" "}
-          <code className="font-mono">default</code>, <code className="font-mono">append</code>, or{" "}
-          <code className="font-mono">replace</code>. Use <code className="font-mono">env</code> to
-          inject provider-specific environment variables.
-        </p>
-
-        <h3 className="text-lg font-medium">Enable Claude Code Chrome MCP</h3>
-        <pre className="bg-card border border-border rounded-lg p-4 font-mono text-sm overflow-x-auto text-white/80">
-          {`{
-  "agents": {
-    "providers": {
-      "claude": {
-        "command": {
-          "mode": "append",
-          "args": ["--chrome"]
-        }
-      }
-    }
-  }
-}`}
-        </pre>
-
-        <h3 className="text-lg font-medium">
-          Point Claude to Anthropic-compatible endpoints (z.ai example)
-        </h3>
-        <pre className="bg-card border border-border rounded-lg p-4 font-mono text-sm overflow-x-auto text-white/80">
-          {`{
-  "agents": {
-    "providers": {
-      "claude": {
-        "env": {
-          "ANTHROPIC_BASE_URL": "https://api.z.ai/api/anthropic",
-          "ANTHROPIC_AUTH_TOKEN": "auth token",
-          "ANTHROPIC_API_KEY": ""
-        }
-      }
-    }
-  }
-}`}
-        </pre>
-
-        <h3 className="text-lg font-medium">Run Claude through Docker</h3>
-        <p className="text-white/60 leading-relaxed">
-          Create a wrapper script that runs Claude in Docker, then tell Labonair to replace the Claude
-          launch command with that script.
-        </p>
-        <pre className="bg-card border border-border rounded-lg p-4 font-mono text-sm overflow-x-auto text-white/80">
-          {`{
-  "agents": {
-    "providers": {
-      "claude": {
-        "command": {
-          "mode": "replace",
-          "argv": ["/Users/you/bin/claude-docker"]
-        }
-      }
-    }
-  }
-}`}
-        </pre>
-        <pre className="bg-card border border-border rounded-lg p-4 font-mono text-sm overflow-x-auto text-white/80">
-          {`#!/usr/bin/env bash
-set -euo pipefail
-docker run --rm -i \\
-  -v "$PWD":"$PWD" \\
-  -w "$PWD" \\
-  -v "$HOME/.claude":"$HOME/.claude" \\
-  ghcr.io/anthropics/claude-code:latest \\
-  claude "$@"`}
-        </pre>
-      </section>
-
-      <section className="space-y-4">
-        <h2 className="text-xl font-medium">Voice</h2>
-        <p className="text-white/60 leading-relaxed">
-          Voice is configured through <code className="font-mono">features.dictation</code> and{" "}
-          <code className="font-mono">features.voiceMode</code>, with provider credentials under{" "}
-          <code className="font-mono">providers</code>.
-        </p>
-        <p className="text-white/60 leading-relaxed">
-          For voice philosophy, architecture, and complete local/OpenAI setup examples, see{" "}
-          <a href="/docs/voice" className="underline hover:text-white/80">
-            Voice docs
-          </a>
-          .
-        </p>
-      </section>
-
-      <section className="space-y-4">
-        <h2 className="text-xl font-medium">Logging</h2>
-        <p className="text-white/60 leading-relaxed">
-          Daemon logging uses separate console and file sinks by default:
-        </p>
-        <ul className="text-white/60 space-y-2 list-disc list-inside">
+        <ul className="text-white/60 space-y-2 list-disc list-inside text-sm">
           <li>
-            Console: <code className="font-mono">info</code> and above
+            <code className="font-mono">labonair.shelf.enabled</code> — enable or disable The Shelf
           </li>
           <li>
-            File (<code className="font-mono">$LABONAIR_HOME/daemon.log</code>):{" "}
-            <code className="font-mono">trace</code> and above
+            <code className="font-mono">labonair.shelf.limit</code> — max number of pinned files
+            (1–9, default: 5)
           </li>
           <li>
-            File rotation: <code className="font-mono">10m</code> max file size,{" "}
-            <code className="font-mono">2</code> retained files total (active + 1 rotated)
-          </li>
-        </ul>
-        <pre className="bg-card border border-border rounded-lg p-4 font-mono text-sm overflow-x-auto text-white/80">
-          {`{
-  "log": {
-    "console": {
-      "level": "info",
-      "format": "pretty"
-    },
-    "file": {
-      "level": "trace",
-      "path": "daemon.log",
-      "rotate": {
-        "maxSize": "10m",
-        "maxFiles": 2
-      }
-    }
-  }
-}`}
-        </pre>
-        <p className="text-white/60 leading-relaxed">
-          Legacy fields <code className="font-mono">log.level</code> and{" "}
-          <code className="font-mono">log.format</code> are still supported and map to the new
-          destination settings.
-        </p>
-      </section>
-
-      <section className="space-y-4">
-        <h2 className="text-xl font-medium">Common env vars</h2>
-        <ul className="text-white/60 space-y-2 list-disc list-inside">
-          <li>
-            <code className="font-mono">LABONAIR_HOME</code> — set Labonair home directory
-          </li>
-          <li>
-            <code className="font-mono">LABONAIR_LISTEN</code> — override{" "}
-            <code className="font-mono">daemon.listen</code>
-          </li>
-          <li>
-            <code className="font-mono">LABONAIR_ALLOWED_HOSTS</code> — override/extend{" "}
-            <code className="font-mono">daemon.allowedHosts</code>
-          </li>
-          <li>
-            <code className="font-mono">LABONAIR_LOG_CONSOLE_LEVEL</code> — override{" "}
-            <code className="font-mono">log.console.level</code>
-          </li>
-          <li>
-            <code className="font-mono">LABONAIR_LOG_FILE_LEVEL</code> — override{" "}
-            <code className="font-mono">log.file.level</code>
-          </li>
-          <li>
-            <code className="font-mono">LABONAIR_LOG_FILE_PATH</code> — override{" "}
-            <code className="font-mono">log.file.path</code>
-          </li>
-          <li>
-            <code className="font-mono">LABONAIR_LOG_FILE_ROTATE_SIZE</code> — override{" "}
-            <code className="font-mono">log.file.rotate.maxSize</code>
-          </li>
-          <li>
-            <code className="font-mono">LABONAIR_LOG_FILE_ROTATE_COUNT</code> — override{" "}
-            <code className="font-mono">log.file.rotate.maxFiles</code>
-          </li>
-          <li>
-            <code className="font-mono">LABONAIR_LOG</code>,{" "}
-            <code className="font-mono">LABONAIR_LOG_FORMAT</code> — legacy log overrides (still
-            supported)
-          </li>
-          <li>
-            <code className="font-mono">OPENAI_API_KEY</code> — override OpenAI provider key
-          </li>
-          <li>
-            <code className="font-mono">LABONAIR_VOICE_LLM_PROVIDER</code> — override voice LLM
-            provider (<code className="font-mono">claude</code>,{" "}
-            <code className="font-mono">codex</code>, <code className="font-mono">opencode</code>)
-          </li>
-          <li>
-            <code className="font-mono">LABONAIR_DICTATION_STT_PROVIDER</code>,{" "}
-            <code className="font-mono">LABONAIR_VOICE_STT_PROVIDER</code>,{" "}
-            <code className="font-mono">LABONAIR_VOICE_TTS_PROVIDER</code> — override voice provider
-            selection (<code className="font-mono">local</code> or{" "}
-            <code className="font-mono">openai</code>)
-          </li>
-          <li>
-            <code className="font-mono">LABONAIR_LOCAL_MODELS_DIR</code> — control local model
-            directory
-          </li>
-          <li>
-            <code className="font-mono">LABONAIR_DICTATION_LOCAL_STT_MODEL</code> — override local
-            dictation STT model
-          </li>
-          <li>
-            <code className="font-mono">LABONAIR_VOICE_LOCAL_STT_MODEL</code>,{" "}
-            <code className="font-mono">LABONAIR_VOICE_LOCAL_TTS_MODEL</code> — override local voice
-            STT/TTS models
-          </li>
-          <li>
-            <code className="font-mono">LABONAIR_VOICE_LOCAL_TTS_SPEAKER_ID</code>,{" "}
-            <code className="font-mono">LABONAIR_VOICE_LOCAL_TTS_SPEED</code> — optional local voice
-            TTS tuning
+            <code className="font-mono">labonair.shelf.showInStatusBar</code> — show shelf slots in
+            the status bar
           </li>
         </ul>
       </section>
 
       <section className="space-y-4">
-        <h2 className="text-xl font-medium">Schema</h2>
+        <h2 className="text-xl font-medium">Inline Git Blame</h2>
         <p className="text-white/60 leading-relaxed">
-          For editor autocomplete/validation, set <code className="font-mono">$schema</code> to:
+          Show git blame information as ghost text in the editor — no extension required.
         </p>
-        <div className="bg-card border border-border rounded-lg p-4 font-mono text-sm">
-          <span>https://labonair.sh/schemas/labonair.config.v1.json</span>
-        </div>
+        <pre className="bg-card border border-border rounded-lg p-4 font-mono text-sm overflow-x-auto text-white/80">
+          {`{
+  "labonair.versionControl.inlineBlame.enabled": true,
+  "labonair.versionControl.inlineBlame.color": "#6C7380"
+}`}
+        </pre>
+      </section>
+
+      <section className="space-y-4">
+        <h2 className="text-xl font-medium">AI Providers</h2>
+        <p className="text-white/60 leading-relaxed">
+          API keys are <strong className="text-white/80">never</strong> stored in{" "}
+          <code className="font-mono">settings.json</code>. They are stored exclusively in your OS
+          keychain via <code className="font-mono">ISecretStorageService</code>.
+        </p>
+        <p className="text-white/60 leading-relaxed">
+          Configure providers in the <strong className="text-white/80">Chat Panel → Settings Tab</strong>.
+          Enter your API key there and it will be saved to macOS Keychain or Windows Credential
+          Manager automatically.
+        </p>
+        <p className="text-white/60 leading-relaxed">Supported providers:</p>
+        <ul className="text-white/60 space-y-1 list-disc list-inside text-sm">
+          <li>OpenAI (GPT-4o, GPT-4 Turbo)</li>
+          <li>Anthropic (Claude 3.5 Sonnet, Claude 3 Opus)</li>
+          <li>Google (Gemini Pro, Gemini Flash)</li>
+          <li>DeepSeek (DeepSeek Coder, DeepSeek Chat)</li>
+          <li>Ollama (any local model — 100% offline)</li>
+        </ul>
+      </section>
+
+      <section className="space-y-4">
+        <h2 className="text-xl font-medium">Typewriter Mode</h2>
+        <p className="text-white/60 leading-relaxed">
+          Keep the cursor vertically centered while typing to reduce eye movement on long coding
+          sessions. Toggle via the Command Palette:{" "}
+          <code className="font-mono">Toggle Typewriter Mode</code>.
+        </p>
+      </section>
+
+      <section className="space-y-4">
+        <h2 className="text-xl font-medium">Complete example</h2>
+        <pre className="bg-card border border-border rounded-lg p-4 font-mono text-sm overflow-x-auto text-white/80">
+          {`{
+  // The Shelf
+  "labonair.shelf.enabled": true,
+  "labonair.shelf.limit": 5,
+  "labonair.shelf.showInStatusBar": true,
+
+  // Inline Git Blame
+  "labonair.versionControl.inlineBlame.enabled": true,
+  "labonair.versionControl.inlineBlame.color": "#6C7380"
+
+  // AI keys: configured in Chat Panel → Settings Tab
+  // They are stored in OS keychain, not here
+}`}
+        </pre>
+      </section>
+
+      <section className="space-y-4">
+        <h2 className="text-xl font-medium">Extensions</h2>
+        <p className="text-white/60 leading-relaxed">
+          Labonair uses the OpenVSX Registry for extensions. To change the extension registry, open
+          the Extensions view from the Dock and search as usual.
+        </p>
+        <p className="text-white/60 leading-relaxed">
+          See{" "}
+          <a href="/docs/worktrees" className="underline hover:text-white/80">
+            Extensions
+          </a>{" "}
+          for more details on what works and what doesn't.
+        </p>
       </section>
     </div>
   );

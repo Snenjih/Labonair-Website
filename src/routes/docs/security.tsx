@@ -4,8 +4,8 @@ import { pageMeta } from "~/meta";
 export const Route = createFileRoute("/docs/security")({
   head: () => ({
     meta: pageMeta(
-      "Security - Labonair Docs",
-      "Security model for Labonair: architecture overview, connection methods, relay encryption, and best practices.",
+      "Privacy & Security - Labonair Docs",
+      "What Labonair removed from VS Code, how API keys are stored, and the privacy architecture.",
     ),
   }),
   component: Security,
@@ -23,266 +23,159 @@ function Security() {
   return (
     <div className="space-y-10">
       <div>
-        <h1 className="text-3xl font-medium font-title mb-4">Security</h1>
+        <h1 className="text-3xl font-medium font-title mb-4">Privacy & Security</h1>
         <p className="text-white/60 leading-relaxed">
-          Labonair follows a client-server architecture, similar to Docker. The daemon runs on your
-          machine and manages your coding agents. Clients (the mobile app, CLI, or web interface)
-          connect to the daemon to monitor and control those agents.
-        </p>
-        <p className="text-white/60 leading-relaxed mt-3">
-          Your code never leaves your machine. Labonair is a local-first tool that connects directly to
-          your development environment.
+          Labonair's privacy model is simple: your code stays on your machine. All Microsoft
+          telemetry has been removed from the source. Your AI keys are stored in your OS keychain,
+          never in plaintext files.
         </p>
       </div>
 
-      {/* Architecture Overview */}
       <section className="space-y-4">
-        <h2 className="text-xl font-medium">Architecture</h2>
+        <h2 className="text-xl font-medium">What was removed</h2>
         <p className="text-white/60 leading-relaxed">
-          The Labonair daemon can run anywhere you want to execute agents: your laptop, a Mac Mini, a
-          VPS, or a Docker container. The daemon listens for connections and manages agent
-          lifecycles.
+          These features and endpoints were removed from the VS Code source as design decisions:
         </p>
-        <p className="text-white/60 leading-relaxed">
-          Clients connect to the daemon over WebSocket. There are two ways to establish this
-          connection:
-        </p>
-        <ul className="text-white/60 space-y-2 list-disc list-inside">
+        <ul className="text-white/60 space-y-3 list-disc list-inside">
           <li>
-            <strong className="text-white/80">Relay connection (recommended)</strong> — The daemon
-            connects outbound to our relay server, and clients meet it there. No open ports
-            required.
+            <strong className="text-white/80">Microsoft telemetry endpoints</strong> — all
+            hardcoded reporting URLs stripped from the source code
           </li>
           <li>
-            <strong className="text-white/80">Direct connection</strong> — The daemon listens on a
-            network address and clients connect directly
+            <code className="font-mono">telemetry.enableTelemetry</code> is forced to{" "}
+            <code className="font-mono">false</code> and cannot be re-enabled
+          </li>
+          <li>
+            <strong className="text-white/80">Microsoft account integration</strong> — Settings
+            Sync and other flows requiring Microsoft login are disabled
+          </li>
+          <li>
+            <strong className="text-white/80">Proprietary extensions</strong> — GitHub Copilot
+            (original) and Live Share use hardcoded Microsoft APIs and will not work. Use
+            Labonair's native AI Core instead.
           </li>
         </ul>
-      </section>
-
-      {/* Relay Connection */}
-      <section className="space-y-4">
-        <h2 className="text-xl font-medium">Relay connections (recommended)</h2>
-        <p className="text-white/60 leading-relaxed">
-          The relay is the simplest way to connect from your phone. It requires no VPN setup, no
-          port forwarding, and no firewall configuration. The daemon can stay bound to localhost or
-          a socket file — it connects <em>outbound</em> to the relay, and your phone meets it there.
-        </p>
 
         <Callout>
-          <strong>The relay is designed to be untrusted.</strong> All traffic between your phone and
-          daemon is end-to-end encrypted. The relay server cannot read your messages, see your code,
-          or modify traffic without detection. Even if the relay is compromised, your data remains
-          protected.
+          <strong>The result:</strong> No usage data, no crash reports, no feature telemetry leaves
+          your machine via Labonair itself.
         </Callout>
+      </section>
 
-        <h3 className="text-lg font-medium mt-6">How it works</h3>
-        <ol className="text-white/60 space-y-2 list-decimal list-inside">
+      <section className="space-y-4">
+        <h2 className="text-xl font-medium">What replaced it</h2>
+        <ul className="text-white/60 space-y-3 list-disc list-inside">
           <li>
-            The daemon generates a persistent ECDH keypair and stores it in{" "}
-            <code className="font-mono">$LABONAIR_HOME/daemon-keypair.json</code>
+            <strong className="text-white/80">OpenVSX Registry</strong> — open-source,
+            community-operated extension registry. No Microsoft account required.
           </li>
           <li>
-            When you scan the QR code or click the pairing link, your phone receives the daemon's
-            public key
+            <strong className="text-white/80">Local data storage</strong> — all user configuration
+            lives in <code className="font-mono">~/.labonair/</code> as JSON. No cloud sync by
+            default.
           </li>
           <li>
-            Your phone sends a handshake message with its own public key. The daemon will not accept
-            any commands until this handshake completes.
+            <strong className="text-white/80">OS Keychain for secrets</strong> — API keys are
+            stored via <code className="font-mono">ISecretStorageService</code> in macOS Keychain
+            or Windows Credential Manager. Never in plaintext.
           </li>
           <li>
-            Both sides perform an ECDH key exchange to derive a shared secret. All subsequent
-            messages are encrypted with AES-256-GCM.
+            <strong className="text-white/80">Offline AI</strong> — configure Ollama to run AI
+            features with zero network traffic.
           </li>
-        </ol>
-        <p className="text-white/60 leading-relaxed mt-3">
-          The relay sees only: IP addresses, timing, message sizes, and session IDs. It cannot read
-          message contents, forge messages, or derive encryption keys from observing the handshake.
-        </p>
+        </ul>
+      </section>
 
-        <h3 className="text-lg font-medium mt-6">Why the relay can't attack you</h3>
+      <section className="space-y-4">
+        <h2 className="text-xl font-medium">API key storage</h2>
         <p className="text-white/60 leading-relaxed">
-          The daemon requires a valid cryptographic handshake before processing any commands. A
-          compromised relay cannot:
+          When you enter an API key in the Chat Panel → Settings Tab, Labonair stores it using:
         </p>
         <ul className="text-white/60 space-y-2 list-disc list-inside">
           <li>
-            <strong className="text-white/80">Send commands</strong> — Without your phone's private
-            key, it cannot complete the handshake
+            <strong className="text-white/80">macOS:</strong> macOS Keychain
           </li>
           <li>
-            <strong className="text-white/80">Read your traffic</strong> — All messages are
-            encrypted with AES-256-GCM after the handshake
+            <strong className="text-white/80">Windows:</strong> Windows Credential Manager
           </li>
           <li>
-            <strong className="text-white/80">Forge messages</strong> — GCM provides authenticated
-            encryption; tampered messages are rejected
-          </li>
-          <li>
-            <strong className="text-white/80">Replay old messages</strong> — Each session derives
-            fresh encryption keys
+            <strong className="text-white/80">Linux:</strong> libsecret / system keyring
           </li>
         </ul>
-
-        <h3 className="text-lg font-medium mt-6">Trust model</h3>
         <p className="text-white/60 leading-relaxed">
-          The QR code or pairing link is the trust anchor. It contains the daemon's public key,
-          which is required to establish the encrypted connection. Treat it like a password — don't
-          share it publicly.
-        </p>
-        <p className="text-white/60 leading-relaxed">
-          If you believe a pairing offer has been compromised, restart the daemon to generate a new
-          session ID and rotate the relay pairing.
+          Keys are <strong className="text-white/80">never</strong> written to{" "}
+          <code className="font-mono">settings.json</code> or any other plaintext file.
         </p>
       </section>
 
-      {/* Direct Connection */}
       <section className="space-y-4">
-        <h2 className="text-xl font-medium">Direct connections</h2>
+        <h2 className="text-xl font-medium">AI traffic</h2>
         <p className="text-white/60 leading-relaxed">
-          By default, the daemon listens on <code className="font-mono">127.0.0.1:6767</code>{" "}
-          (localhost only). This is safe for local CLI usage but not reachable from your phone or
-          other devices.
+          When you use cloud AI providers (OpenAI, Anthropic, Google, DeepSeek), your prompts and
+          context are sent directly to that provider's API using your own API key. Labonair acts as
+          a local client — it does not proxy, log, or store your AI conversations.
         </p>
-
-        <h3 className="text-lg font-medium mt-6">Socket file (CLI only)</h3>
         <p className="text-white/60 leading-relaxed">
-          For maximum isolation, you can configure the daemon to listen on a Unix socket file
-          instead of a TCP port. This prevents any network access entirely — only processes on the
-          same machine can connect. The CLI supports this mode, but the mobile app and web interface
-          require a network connection.
-        </p>
-
-        <h3 className="text-lg font-medium mt-6">VPN access</h3>
-        <p className="text-white/60 leading-relaxed">
-          If you prefer direct connections over the relay, you can use a VPN like{" "}
+          For full offline operation, use{" "}
           <a
-            href="https://tailscale.com"
+            href="https://ollama.com"
             target="_blank"
             rel="noopener noreferrer"
             className="underline hover:text-white/80"
           >
-            Tailscale
+            Ollama
           </a>
-          . Tailscale creates a private network between your devices, so you can access your daemon
-          without exposing it to the public internet.
+          . With Ollama configured, no bytes from your AI interactions leave your machine.
         </p>
-        <p className="text-white/60 leading-relaxed">To set this up:</p>
-        <ol className="text-white/60 space-y-2 list-decimal list-inside">
-          <li>
-            Install Tailscale on your machine and phone and join them to the same{" "}
-            <a
-              href="https://tailscale.com/kb/1136/tailnet"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="underline hover:text-white/80"
-            >
-              tailnet
-            </a>
-          </li>
-          <li>
-            Configure the daemon to listen on your Tailscale IP (e.g.,{" "}
-            <code className="font-mono">100.x.y.z:6767</code>)
-          </li>
-          <li>
-            Add your Tailscale hostname to <code className="font-mono">allowedHosts</code> and{" "}
-            <code className="font-mono">cors.allowedOrigins</code>
-          </li>
-          <li>
-            Add the daemon as a direct connection in the Labonair app using the Tailscale address
-          </li>
-        </ol>
-
-        <h3 className="text-lg font-medium mt-6">Binding to 0.0.0.0</h3>
-        <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-4 text-white/80">
-          <strong>Warning:</strong> Binding to <code className="font-mono">0.0.0.0</code> makes the
-          daemon reachable on all network interfaces, including public Wi-Fi and local networks.
-          This can expose your daemon to unauthorized access. If you must bind to all interfaces,
-          ensure you have proper firewall rules and review your{" "}
-          <code className="font-mono">allowedHosts</code> configuration.
-        </div>
       </section>
 
-      {/* DNS Rebinding Protection */}
       <section className="space-y-4">
-        <h2 className="text-xl font-medium">DNS rebinding protection</h2>
+        <h2 className="text-xl font-medium">ACP agent security</h2>
         <p className="text-white/60 leading-relaxed">
-          <strong className="text-white/80">CORS is not a complete security boundary.</strong> It
-          controls which browser origins can make requests, but does not prevent a malicious website
-          from resolving its domain to your local machine (DNS rebinding).
+          When using autonomous agents via Agent Client Protocol (ACP), Labonair includes a
+          Human-in-the-Loop permission system. Agents that attempt high-impact actions (writing
+          files, running terminal commands) will request confirmation from you before proceeding.
         </p>
         <p className="text-white/60 leading-relaxed">
-          Labonair uses a host allowlist to validate the <code className="font-mono">Host</code> header
-          on incoming requests. Requests with unrecognized hosts are rejected.
+          You remain in control at all times. See{" "}
+          <a href="/docs/skills" className="underline hover:text-white/80">
+            ACP Agents
+          </a>{" "}
+          for details.
         </p>
+      </section>
+
+      <section className="space-y-4">
+        <h2 className="text-xl font-medium">Settings Sync</h2>
         <p className="text-white/60 leading-relaxed">
-          Configure via <code className="font-mono">daemon.allowedHosts</code> in{" "}
-          <code className="font-mono">config.json</code>:
+          The built-in VS Code Settings Sync (which uploads your settings to Microsoft servers) is
+          disabled. To sync settings across machines:
         </p>
         <ul className="text-white/60 space-y-2 list-disc list-inside">
           <li>
-            Default (<code className="font-mono">[]</code>): allow{" "}
-            <code className="font-mono">localhost</code>,{" "}
-            <code className="font-mono">*.localhost</code>, and all IP addresses
+            Version your <code className="font-mono">~/.labonair/</code> folder with Git
           </li>
           <li>
-            <code className="font-mono">['.example.com']</code>: allow{" "}
-            <code className="font-mono">example.com</code> and any subdomain, plus defaults
-          </li>
-          <li>
-            <code className="font-mono">true</code>: allow any host (not recommended)
+            Use the open-source "Settings Sync" extension by Shan Khan (available on OpenVSX)
           </li>
         </ul>
       </section>
 
-      {/* Agent Authentication */}
       <section className="space-y-4">
-        <h2 className="text-xl font-medium">Agent authentication</h2>
+        <h2 className="text-xl font-medium">Source code</h2>
         <p className="text-white/60 leading-relaxed">
-          Labonair wraps agent CLIs (Claude Code, Codex, OpenCode) but does not manage their
-          authentication. Each agent provider handles its own credentials:
+          Labonair is fully open source under the MIT license. You can review exactly what was
+          changed from the VS Code source on{" "}
+          <a
+            href="https://github.com/Snenjih/Labonair"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline hover:text-white/80"
+          >
+            GitHub
+          </a>
+          .
         </p>
-        <ul className="text-white/60 space-y-2 list-disc list-inside">
-          <li>
-            <strong className="text-white/80">Claude Code</strong> — authenticates via Anthropic's
-            OAuth flow, stored in <code className="font-mono">~/.claude/</code>
-          </li>
-          <li>
-            <strong className="text-white/80">Codex</strong> — uses your OpenAI API key or OAuth
-            session
-          </li>
-          <li>
-            <strong className="text-white/80">OpenCode</strong> — configured via provider-specific
-            API keys
-          </li>
-        </ul>
-        <p className="text-white/60 leading-relaxed">
-          Labonair never stores or transmits provider API keys. Agents run in your user context with
-          your existing credentials.
-        </p>
-      </section>
-
-      {/* Best Practices Summary */}
-      <section className="space-y-4">
-        <h2 className="text-xl font-medium">Recommendations</h2>
-        <ul className="text-white/60 space-y-3 list-disc list-inside">
-          <li>
-            <strong className="text-white/80">Use the relay</strong> for mobile access — it's the
-            simplest option and all traffic is end-to-end encrypted
-          </li>
-          <li>
-            <strong className="text-white/80">Treat the QR code like a password</strong> — anyone
-            with the pairing offer can connect to your daemon
-          </li>
-          <li>
-            <strong className="text-white/80">Never bind to 0.0.0.0</strong> unless you understand
-            the implications and have proper firewall rules
-          </li>
-          <li>
-            <strong className="text-white/80">Keep your daemon updated</strong> — security
-            improvements are released regularly
-          </li>
-        </ul>
       </section>
     </div>
   );

@@ -7,13 +7,13 @@ export const Route = createFileRoute("/docs")({
 
 const navigation = [
   { name: "Getting started", href: "/docs" },
-  { name: "Updates", href: "/docs/updates" },
-  { name: "Voice", href: "/docs/voice" },
-  { name: "Git worktrees", href: "/docs/worktrees" },
-  { name: "CLI", href: "/docs/cli" },
-  { name: "Skills", href: "/docs/skills" },
+  { name: "The Shelf", href: "/docs/updates" },
+  { name: "AI Providers", href: "/docs/voice" },
+  { name: "ACP Agents", href: "/docs/skills" },
+  { name: "Extensions", href: "/docs/worktrees" },
+  { name: "Keyboard shortcuts", href: "/docs/cli" },
   { name: "Configuration", href: "/docs/configuration" },
-  { name: "Security", href: "/docs/security" },
+  { name: "Privacy & Security", href: "/docs/security" },
   { name: "Best practices", href: "/docs/best-practices" },
 ];
 

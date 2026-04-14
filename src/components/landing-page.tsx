@@ -10,18 +10,12 @@ import {
 import { CursorFieldProvider } from "~/components/butterfly";
 import { CommandDialog } from "~/components/command-dialog";
 import {
-  appStoreUrl,
-  playStoreUrl,
-  webAppUrl,
   getDownloadOptions,
   useDetectedPlatform,
   AppleIcon,
-  AndroidIcon,
   TerminalIcon,
-  GlobeIcon,
 } from "~/downloads";
 import { useRelease } from "~/routes/__root";
-import { Mic } from "lucide-react";
 import { HeroMockup } from "~/components/hero-mockup";
 import { ClaudeIcon } from "~/components/mockup";
 import { SiteHeader } from "~/components/site-header";
@@ -55,9 +49,6 @@ export function LandingPage({ title, subtitle }: LandingPageProps) {
           </div>
         </motion.div>
       </div>
-
-      {/* Phone showcase */}
-      <PhoneShowcase />
 
       {/* Content section */}
       <div className="bg-background">
@@ -110,25 +101,31 @@ export function LandingPage({ title, subtitle }: LandingPageProps) {
               </div>
             </div>
             <div className="space-y-3">
-              <p className="text-white/60 font-medium">Agents</p>
+              <p className="text-white/60 font-medium">Features</p>
               <div className="space-y-2">
                 <a
-                  href="/claude-code"
+                  href="/docs/updates"
                   className="block text-white/40 hover:text-white/60 transition-colors"
                 >
-                  Claude Code
+                  The Shelf
                 </a>
                 <a
-                  href="/codex"
+                  href="/docs/voice"
                   className="block text-white/40 hover:text-white/60 transition-colors"
                 >
-                  Codex
+                  AI Providers
                 </a>
                 <a
-                  href="/opencode"
+                  href="/docs/skills"
                   className="block text-white/40 hover:text-white/60 transition-colors"
                 >
-                  OpenCode
+                  ACP Agents
+                </a>
+                <a
+                  href="/docs/cli"
+                  className="block text-white/40 hover:text-white/60 transition-colors"
+                >
+                  Shortcuts
                 </a>
               </div>
             </div>
@@ -157,36 +154,30 @@ export function LandingPage({ title, subtitle }: LandingPageProps) {
               <p className="text-white/60 font-medium">Download</p>
               <div className="space-y-2">
                 <a
-                  href={appStoreUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  href="/download"
                   className="block text-white/40 hover:text-white/60 transition-colors"
                 >
-                  App Store
+                  macOS
                 </a>
                 <a
-                  href={playStoreUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  href="/download"
                   className="block text-white/40 hover:text-white/60 transition-colors"
                 >
-                  Google Play
+                  Windows
                 </a>
                 <a
-                  href="https://github.com/Snenjih/Labonair-Website/releases"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  href="/download"
                   className="block text-white/40 hover:text-white/60 transition-colors"
                 >
-                  Desktop
+                  Linux
                 </a>
                 <a
-                  href={webAppUrl}
+                  href="https://github.com/Snenjih/Labonair/releases"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="block text-white/40 hover:text-white/60 transition-colors"
                 >
-                  Web App
+                  All releases
                 </a>
               </div>
             </div>
@@ -299,26 +290,26 @@ function PrinciplesSection() {
 
 function MultiProviderSection() {
   const providers = [
-    { name: "Claude Code", icon: <ClaudeIcon size={28} /> },
-    { name: "Codex", icon: <CodexIcon className="w-7 h-7" /> },
-    { name: "OpenCode", icon: <OpenCodeIcon className="w-7 h-7" /> },
-    { name: "Copilot", icon: <CopilotIcon className="w-7 h-7" /> },
-    { name: "Pi", icon: <PiIcon className="w-7 h-7" /> },
+    { name: "OpenAI", subtitle: "GPT-4o, GPT-4 Turbo" },
+    { name: "Anthropic", subtitle: "Claude 3.5 Sonnet, Opus" },
+    { name: "Google", subtitle: "Gemini Pro, Gemini Flash" },
+    { name: "DeepSeek", subtitle: "DeepSeek Coder, Chat" },
+    { name: "Ollama", subtitle: "100% offline, any model" },
   ];
 
   return (
     <FeatureSection
-      title="Use the best agent for the job"
-      description="Run multiple providers from a single interface. Labonair runs the native agent harness as you'd normally run it, with your skills, config and MCP servers intact."
+      title="Bring your own key"
+      description="Connect to any AI provider with your own API keys. Or run completely offline with Ollama. No subscriptions, no lock-in — your keys stay in your OS keychain."
     >
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {providers.slice(0, 3).map((p) => (
           <div
             key={p.name}
-            className="flex items-center justify-center gap-3 rounded-xl border border-white/10 bg-white/[0.03] px-5 py-4"
+            className="flex flex-col gap-1.5 rounded-xl border border-white/10 bg-white/[0.03] px-5 py-4"
           >
-            <span className="text-white/80">{p.icon}</span>
             <span className="font-medium">{p.name}</span>
+            <span className="text-xs text-white/40">{p.subtitle}</span>
           </div>
         ))}
       </div>
@@ -326,10 +317,10 @@ function MultiProviderSection() {
         {providers.slice(3).map((p) => (
           <div
             key={p.name}
-            className="flex items-center justify-center gap-3 rounded-xl border border-white/10 bg-white/[0.03] px-5 py-4"
+            className="flex flex-col gap-1.5 rounded-xl border border-white/10 bg-white/[0.03] px-5 py-4"
           >
-            <span className="text-white/80">{p.icon}</span>
             <span className="font-medium">{p.name}</span>
+            <span className="text-xs text-white/40">{p.subtitle}</span>
           </div>
         ))}
       </div>
@@ -602,30 +593,62 @@ function SelfHostedDiagram() {
 }
 
 function SelfHostedSection() {
+  const slots = [
+    { shortcut: "⌘1", file: "src/auth/middleware.ts", state: "error" as const },
+    { shortcut: "⌘2", file: "src/api/routes.ts", state: "modified" as const },
+    { shortcut: "⌘3", file: "src/components/Nav.tsx", state: "clean" as const },
+    { shortcut: "⌘4", file: "src/hooks/useAuth.ts", state: "clean" as const },
+    { shortcut: "⌘5", file: "src/types/index.ts", state: "modified" as const },
+  ];
+
   return (
     <FeatureSection
-      title="Your agents, every surface"
-      description="Run agents on your laptop, a VM, or a dev server. Control them from any device with a direct connection or an E2E encrypted relay."
+      title="The Shelf — no more tab chaos"
+      description="Pin up to 9 files for instant keyboard access. Jump between your most important files in a single keystroke. Smart indicators show unsaved changes and errors at a glance."
     >
-      <SelfHostedDiagram />
+      <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-5 space-y-2">
+        {slots.map((slot) => (
+          <div
+            key={slot.shortcut}
+            className="flex items-center justify-between rounded-lg border border-white/10 bg-white/[0.03] px-4 py-2.5"
+          >
+            <div className="flex items-center gap-3">
+              <kbd className="text-xs px-1.5 py-0.5 rounded bg-white/10 text-white/50 font-mono whitespace-nowrap">
+                {slot.shortcut}
+              </kbd>
+              <span className="text-sm text-white/80 font-mono">{slot.file}</span>
+            </div>
+            {slot.state === "error" && (
+              <span className="w-1.5 h-1.5 rounded-full bg-red-400/80 flex-shrink-0" title="Error" />
+            )}
+            {slot.state === "modified" && (
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-400/80 flex-shrink-0" title="Unsaved changes" />
+            )}
+          </div>
+        ))}
+      </div>
+      <p className="text-xs text-white/30">
+        Pin: <kbd className="font-mono bg-white/10 px-1 rounded">⌘⇧1–9</kbd> &nbsp;·&nbsp;
+        Jump: <kbd className="font-mono bg-white/10 px-1 rounded">⌘1–9</kbd>
+      </p>
     </FeatureSection>
   );
 }
 
 function ShortcutsSection() {
   const shortcuts = [
-    { keys: ["⌘", "1-9"], action: "Switch panels" },
-    { keys: ["⌘", "D"], action: "Split vertical" },
-    { keys: ["⌘", "Shift", "D"], action: "Split horizontal" },
-    { keys: ["⌘", "W"], action: "Close panel" },
-    { keys: ["⌘", "N"], action: "New agent" },
-    { keys: ["⌘", "K"], action: "Command palette" },
+    { keys: ["⌘", "1–9"], action: "Jump to Shelf slot" },
+    { keys: ["⌘", "⇧", "1–9"], action: "Pin file to Shelf" },
+    { keys: ["⌘", "P"], action: "Quick Open" },
+    { keys: ["⌘", "⇧", "P"], action: "Command Palette" },
+    { keys: ["⌘", "⇧", "N"], action: "New AI Chat" },
+    { keys: ["⌘", "E"], action: "Reveal in Sidebar" },
   ];
 
   return (
     <FeatureSection
       title="Keyboard-first"
-      description="Every action has a shortcut. Panels, splits, agents - all from the keyboard."
+      description="Every action has a shortcut. Navigate, pin files, open chats — all without touching the mouse."
     >
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
         {shortcuts.map((s) => (
@@ -828,50 +851,49 @@ function StreamingWords({
 }
 
 function LocalVoiceSection() {
-  const { dictationWordIndex, responseWordIndex, showResponse } = useVoiceConversation();
+  const features = [
+    {
+      title: "Native Inline Blame",
+      description:
+        "Git blame as ghost text directly in each line. No extension needed. Configurable color and format.",
+      config: '"labonair.versionControl.inlineBlame.enabled": true',
+    },
+    {
+      title: "Typewriter Mode",
+      description:
+        "Cursor stays vertically centered while you type. Less eye movement, less fatigue on long sessions.",
+      config: "Command Palette → Toggle Typewriter Mode",
+    },
+    {
+      title: "Instant Preview",
+      description:
+        "Navigate Quick Open results with arrow keys and files appear instantly in the background. No clicking needed.",
+      config: "Built-in · ↑/↓ in Quick Open",
+    },
+    {
+      title: "Terminal Tabs",
+      description:
+        "Terminals look and behave like editor tabs — horizontal layout, no separate panel eating screen space.",
+      config: "Built-in · Open with ⌘`",
+    },
+  ];
 
   return (
     <FeatureSection
-      title="Local voice"
-      description="Fully local voice stack. Speech-to-text and text-to-speech run entirely on your machine, nothing leaves your network."
+      title="The details that matter"
+      description="The features you didn't know you needed, until you can't live without them."
     >
-      <div className="relative w-full rounded-2xl border border-white/10 bg-white/[0.02] overflow-hidden">
-        <div className="px-6 pt-8 pb-6 space-y-3">
-          {/* Waveform area */}
-          <div className="relative">
-            <VoiceWaveform />
-          </div>
-
-          {/* User dictation */}
-          <div className="flex items-start gap-3">
-            <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center flex-shrink-0">
-              <Mic size={16} className="text-white/60" />
-            </div>
-            <div className="pt-1">
-              <StreamingWords
-                words={USER_WORDS}
-                wordIndex={dictationWordIndex}
-                confirmLag={DICTATION_LAG}
-              />
-            </div>
-          </div>
-
-          {/* Agent response — always rendered to reserve space */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {features.map((f) => (
           <div
-            className={`flex items-start gap-3 transition-opacity duration-300 ${showResponse ? "opacity-100" : "opacity-0"}`}
+            key={f.title}
+            className="rounded-xl border border-white/10 bg-white/[0.03] p-5 space-y-2"
           >
-            <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center flex-shrink-0">
-              <ClaudeIcon size={16} className="text-white/60" />
-            </div>
-            <div className="pt-1">
-              <StreamingWords
-                words={RESPONSE_WORDS}
-                wordIndex={responseWordIndex}
-                confirmLag={RESPONSE_LAG}
-              />
-            </div>
+            <p className="font-medium text-sm">{f.title}</p>
+            <p className="text-xs text-white/50 leading-relaxed">{f.description}</p>
+            <p className="text-xs text-white/25 font-mono truncate">{f.config}</p>
           </div>
-        </div>
+        ))}
       </div>
     </FeatureSection>
   );
@@ -887,48 +909,24 @@ function GetStarted() {
     >
       <div className="flex flex-row flex-wrap gap-3">
         <DownloadButton />
-        <a
-          href={webAppUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center justify-center gap-2 rounded-lg border border-white/20 px-4 py-2 text-sm font-medium text-white hover:bg-white/10 transition-colors"
-        >
-          <GlobeIcon className="h-4 w-4" />
-          Web App
-        </a>
-        <a
-          href={appStoreUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center justify-center rounded-lg border border-white/20 px-3 py-2 text-white hover:bg-white/10 transition-colors"
-          aria-label="App Store"
-        >
-          <AppleIcon className="h-5 w-5" />
-        </a>
-        <a
-          href={playStoreUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center justify-center rounded-lg border border-white/20 px-3 py-2 text-white hover:bg-white/10 transition-colors"
-          aria-label="Google Play"
-        >
-          <AndroidIcon className="h-5 w-5" />
-        </a>
-        <ServerInstallButton />
+        <HomebrewButton />
       </div>
       <div className="pt-3">
         <a href="/download" className="text-xs text-white/40 hover:text-white/70 transition-colors">
           All download options
         </a>
       </div>
-      <div className="flex items-center gap-2 pt-6">
-        <span className="text-xs text-white/40">Supports</span>
-        <div className="flex items-center gap-1">
-          <AgentBadge name="Claude Code" icon={<ClaudeCodeIcon className="h-6 w-6" />} />
-          <AgentBadge name="Codex" icon={<CodexIcon className="h-6 w-6" />} />
-          <AgentBadge name="OpenCode" icon={<OpenCodeIcon className="h-6 w-6" />} />
-          <AgentBadge name="Copilot" icon={<CopilotIcon className="h-6 w-6" />} />
-          <AgentBadge name="Pi" icon={<PiIcon className="h-6 w-6" />} />
+      <div className="flex flex-wrap items-center gap-2 pt-6">
+        <span className="text-xs text-white/40">AI Providers</span>
+        <div className="flex flex-wrap items-center gap-1.5">
+          {["OpenAI", "Anthropic", "Google", "DeepSeek", "Ollama"].map((name) => (
+            <span
+              key={name}
+              className="text-xs px-2 py-0.5 rounded-full border border-white/15 text-white/50"
+            >
+              {name}
+            </span>
+          ))}
         </div>
       </div>
     </motion.div>
@@ -954,21 +952,22 @@ function DownloadButton() {
   );
 }
 
-function ServerInstallButton() {
+function HomebrewButton() {
   return (
     <CommandDialog
       trigger={
-        <span className="inline-flex items-center justify-center rounded-lg border border-white/20 px-3 py-2 text-white hover:bg-white/10 transition-colors">
-          <TerminalIcon className="h-5 w-5" />
+        <span className="inline-flex items-center justify-center gap-2 rounded-lg border border-white/20 px-4 py-2 text-sm font-medium text-white hover:bg-white/10 transition-colors">
+          <TerminalIcon className="h-4 w-4" />
+          Homebrew
         </span>
       }
-      title="Run agents on a remote machine"
-      description="For headless machines you want to connect to from the Labonair apps. The desktop app already includes a built-in daemon."
-      command="npm install -g @labonair/cli && labonair"
+      title="Install via Homebrew"
+      description="Homebrew automatically removes the macOS quarantine attribute — no extra steps needed."
+      command="brew tap Snenjih/tap && brew install --cask labonair"
       footnote={
         <>
-          Requires Node.js 18+. Run <span className="font-mono text-white/40">labonair</span> to start
-          the daemon.
+          Update anytime with{" "}
+          <span className="font-mono text-white/40">brew upgrade labonair</span>
         </>
       }
     />
@@ -1127,7 +1126,7 @@ const bashKeywords = new Set([
   "true",
   "false",
 ]);
-const bashCommands = new Set(["labonair", "echo", "jq"]);
+const bashCommands = new Set(["labonair", "echo", "jq", "brew", "xattr"]);
 
 function highlightBash(code: string): React.ReactNode {
   const tokens: React.ReactNode[] = [];
@@ -1331,41 +1330,38 @@ interface CLIExample {
 
 const cliExamples: CLIExample[] = [
   {
-    title: "Run agents",
+    title: "Install",
     description:
-      "Launch agents locally or on any remote host. The --worktree flag spins up an isolated git branch so you can run multiple agents on the same repo without conflicts.",
-    code: `labonair run "implement user authentication"
-labonair run --provider codex --worktree feature-x "implement feature X"
-labonair run --host devbox:6767 "run the full test suite"
+      "Get Labonair on macOS via Homebrew. Homebrew handles quarantine automatically — no right-click workarounds needed.",
+    code: `# macOS (recommended)
+brew tap Snenjih/tap
+brew install --cask labonair
 
-labonair ls                           # list running agents
-labonair attach abc123                # stream live output
-labonair send abc123 "also add tests" # follow-up task`,
+# Update to latest release
+brew upgrade labonair`,
   },
   {
-    title: "Loops",
+    title: "The Shelf",
     description:
-      "Have one agent do the work, another verify the result, and loop until it passes. Built-in, no shell scripting needed.",
-    code: `# Worker-verifier loop: fix tests until they pass
-labonair loop run "make all tests pass" \\
-  --verify "verify tests pass and the code is production-ready" \\
-  --verify-check "npm test" \\
-  --max-iterations 5
+      "Configure The Shelf in settings.json. Pin your most-used files for instant keyboard access.",
+    code: `# settings.json
+"labonair.shelf.enabled": true,
+"labonair.shelf.limit": 5,
+"labonair.shelf.showInStatusBar": true
 
-labonair loop ls                        # list running loops
-labonair loop logs abc123               # stream loop output`,
+# Pin a file: Cmd + Shift + 1-9
+# Jump to slot: Cmd + 1-9`,
   },
   {
-    title: "Schedules",
+    title: "Inline Blame",
     description:
-      "Run agents on a cron schedule. Automate recurring tasks like dependency updates, security audits, or report generation.",
-    code: `# Run a security audit every Monday at 9am
-labonair schedule create --cron "0 9 * * 1" \\
-  "audit the codebase for security issues and open PRs for fixes"
+      "Enable native git blame ghost text. No extensions, no slowdown — it just appears in your editor.",
+    code: `# settings.json
+"labonair.versionControl.inlineBlame.enabled": true,
+"labonair.versionControl.inlineBlame.color": "#6C7380"
 
-labonair schedule ls                    # list all schedules
-labonair schedule pause abc123          # pause a schedule
-labonair schedule delete abc123         # remove a schedule`,
+# AI keys are stored in your OS keychain
+# Chat Panel → Settings Tab → enter API key`,
   },
 ];
 
@@ -1479,8 +1475,8 @@ function CLISection() {
 
   return (
     <FeatureSection
-      title="Fully scriptable"
-      description="Everything you can do in the app, you can do from the terminal."
+      title="Set up in seconds"
+      description="Labonair works out of the box. Install via Homebrew, configure what you need, and start coding."
     >
       <div className="flex flex-wrap gap-2">
         {cliExamples.map((example, i) => (
@@ -1499,14 +1495,15 @@ function CLISection() {
       </div>
 
       <div className="space-y-3">
+        <p className="text-xs text-white/40">{active.description}</p>
         <CLICodeBlock>{active.code}</CLICodeBlock>
       </div>
 
       <a
-        href="/docs/cli"
+        href="/docs"
         className="inline-flex items-center gap-1.5 text-xs text-white/40 hover:text-white/70 transition-colors"
       >
-        Full CLI reference
+        Full documentation
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="12"
@@ -1536,71 +1533,75 @@ function FAQ() {
     >
       <h2 className="text-3xl font-medium">FAQ</h2>
       <div className="space-y-6">
-        <FAQItem question="Is this free?">
-          Yes. Labonair is free and open source. You need Claude Code, Codex, or OpenCode installed
-          with your own credentials. Voice is local-first by default and can optionally use OpenAI
-          speech providers if you configure them.
+        <FAQItem question="Is Labonair free?">
+          Yes. Labonair is MIT-licensed and completely free and open source — and always will be.
         </FAQItem>
-        <FAQItem question="Does my code leave my machine?">
-          Labonair doesn't send your code anywhere. Agents run locally and talk to their own APIs as
-          they normally would. For remote access, you can use the optional{" "}
+        <FAQItem question="Can I use my VS Code extensions?">
+          Most of them, yes. Labonair uses the{" "}
+          <a
+            href="https://open-vsx.org"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline hover:text-white/80"
+          >
+            OpenVSX Registry
+          </a>{" "}
+          — an open-source community-run alternative to the Microsoft Marketplace. Python, Rust, Go,
+          Vue, React, Prettier, ESLint, Docker — all available. Proprietary Microsoft extensions
+          like the original GitHub Copilot and Live Share won't work.
+        </FAQItem>
+        <FAQItem question="Where is the Activity Bar?">
+          Removed. All views (Explorer, Search, Source Control, Extensions) are accessible from the
+          Dock at the bottom left. This frees up significant horizontal screen real estate for your
+          code.
+        </FAQItem>
+        <FAQItem question="How is the AI different from Copilot?">
+          Labonair has a built-in Dual-Engine AI Core. In Direct API Mode, you chat with GPT-4o,
+          Claude, Gemini, or DeepSeek using your own API keys — no subscription. With Agent Client
+          Protocol (ACP), you connect autonomous agents like Claude Code that can run terminal
+          commands, edit files, and refactor entire directories.
+        </FAQItem>
+        <FAQItem question="Does Labonair collect telemetry?">
+          No. All Microsoft telemetry endpoints are removed from the source code.{" "}
+          <code className="font-mono text-muted-foreground">telemetry.enableTelemetry</code> is
+          forced to <code className="font-mono text-muted-foreground">false</code>. No usage data
+          leaves your machine. See{" "}
           <a href="/docs/security" className="underline hover:text-white/80">
-            end-to-end encrypted relay
+            Privacy & Security
           </a>
-          , connect directly over your local network, or use your own tunnel.
+          .
         </FAQItem>
-        <FAQItem question="What agents does it support?">
-          Claude Code, Codex, and OpenCode. Each agent runs as its own process using its own CLI.
-          Labonair doesn't modify or wrap their behavior.
+        <FAQItem question="Can I use Labonair completely offline?">
+          Yes. Configure{" "}
+          <a
+            href="https://ollama.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline hover:text-white/80"
+          >
+            Ollama
+          </a>{" "}
+          as your AI provider and Labonair runs 100% locally. Any local model, zero internet
+          required.
         </FAQItem>
-        <FAQItem question="Do I need the desktop app?">
-          No. You can run the daemon headless with{" "}
+        <FAQItem question="How are my API keys stored?">
+          API keys are never stored in plaintext files. Labonair uses your OS keychain — macOS
+          Keychain on Mac, Windows Credential Manager on Windows — via the{" "}
+          <code className="font-mono text-muted-foreground">ISecretStorageService</code>. Keys are
+          configured in the Chat Panel → Settings Tab.
+        </FAQItem>
+        <FAQItem question="How do I sync my settings between machines?">
+          Settings Sync (which sends data to Microsoft servers) is disabled for privacy. We recommend
+          versioning your <code className="font-mono text-muted-foreground">~/.labonair</code> folder
+          with Git, or using the open-source "Settings Sync" extension by Shan Khan.
+        </FAQItem>
+        <FAQItem question="macOS says the app is damaged or can't be opened">
+          Labonair is ad-hoc signed but not notarized. Right-click the app in Finder → Open → click
+          Open in the dialog. Or run:{" "}
           <code className="font-mono text-muted-foreground">
-            npm install -g @labonair/cli && labonair
-          </code>{" "}
-          and use the CLI, web app, or mobile app to connect. The desktop app just bundles the
-          daemon with a UI.
-        </FAQItem>
-        <FAQItem question="How does voice work?">
-          Voice runs locally on your device by default. You talk, the app transcribes and sends it
-          to your agent as text. Optionally, you can configure OpenAI speech providers for
-          higher-quality transcription and text-to-speech. See the{" "}
-          <a href="/docs/voice" className="underline hover:text-white/80">
-            voice docs
-          </a>
-          .
-        </FAQItem>
-        <FAQItem question="Can I connect from outside my network?">
-          Yes. You can use the hosted relay (end-to-end encrypted, Labonair can't read your traffic),
-          set up your own tunnel (Tailscale, Cloudflare Tunnel, etc.), or expose the daemon port
-          directly. See{" "}
-          <a href="/docs/configuration" className="underline hover:text-white/80">
-            configuration
-          </a>
-          .
-        </FAQItem>
-        <FAQItem question="Do I need git or GitHub?">
-          No. Labonair works in any directory. Worktrees are optional and only relevant if you use git.
-          You can run agents anywhere you'd normally work.
-        </FAQItem>
-        <FAQItem question="Can I get banned for using Labonair?">
-          <p>We can't make promises on behalf of providers.</p>
-          <p>
-            That said, Labonair launches the official first-party CLIs (Claude Code, Codex, OpenCode)
-            as subprocesses. It doesn't extract tokens or call inference APIs directly. From the
-            provider's perspective, usage through Labonair is indistinguishable from running the CLI
-            yourself.
-          </p>
-          <p>I've been using Labonair with all providers for months without issue.</p>
-        </FAQItem>
-        <FAQItem question="How do worktrees work?">
-          When you launch an agent with the worktree option (from the app, desktop, or CLI), Labonair
-          creates a git worktree and runs the agent inside it. The agent works on an isolated branch
-          without touching your main working directory. See the{" "}
-          <a href="/docs/worktrees" className="underline hover:text-white/80">
-            worktrees docs
-          </a>
-          .
+            xattr -rd com.apple.quarantine /Applications/Labonair.app
+          </code>
+          . Installing via Homebrew avoids this entirely.
         </FAQItem>
       </div>
     </motion.div>
@@ -1618,15 +1619,16 @@ function SponsorCTA() {
     >
       <div className="text-sm text-muted-foreground leading-relaxed space-y-3">
         <p>
-          I built Labonair because I wanted better tools for coding agents on my own setup. It's an
-          independent open source project, built around freedom of choice and real workflows. If you
-          like what I'm building, consider becoming a supporter.
+          I built Labonair because I wanted a code editor that doesn't spy on me, doesn't lock me
+          into subscriptions, and gets out of my way. It's an independent open source project built
+          for developers who care about focus, privacy, and owning their tools. If you find it
+          useful, consider supporting the project.
         </p>
-        <p>- Mo</p>
+        <p>— Snenjih</p>
       </div>
       <div className="pt-2">
         <a
-          href="https://github.com/sponsors/boudra"
+          href="https://github.com/sponsors/Snenjih"
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex items-center gap-2 rounded-lg bg-white/10 border border-white/20 px-5 py-2.5 text-sm font-medium text-white hover:bg-white/15 transition-colors"

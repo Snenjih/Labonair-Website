@@ -4,304 +4,118 @@ import { pageMeta } from "~/meta";
 export const Route = createFileRoute("/docs/worktrees")({
   head: () => ({
     meta: pageMeta(
-      "Git Worktrees - Labonair Docs",
-      "Run agents in isolated git worktrees for parallel feature development.",
+      "Extensions - Labonair Docs",
+      "Extensions in Labonair via OpenVSX Registry. What works, what doesn't, and how to install.",
     ),
   }),
-  component: Worktrees,
+  component: ExtensionsDocs,
 });
 
-function Code({ children }: { children: React.ReactNode }) {
+function ExtensionsDocs() {
   return (
-    <div className="bg-card border border-border rounded-lg p-4 font-mono text-sm overflow-x-auto">
-      {children}
-    </div>
-  );
-}
-
-function Worktrees() {
-  return (
-    <div className="space-y-10">
+    <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-medium font-title mb-4">Git Worktrees</h1>
+        <h1 className="text-3xl font-medium font-title mb-4">Extensions</h1>
         <p className="text-white/60 leading-relaxed">
-          Git worktrees let you have multiple working directories from the same repository. Labonair
-          uses them to run agents in isolated branches without switching contexts.
+          Labonair uses the{" "}
+          <a
+            href="https://open-vsx.org"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline hover:text-white/80"
+          >
+            OpenVSX Registry
+          </a>{" "}
+          — an open-source, vendor-neutral alternative to the Microsoft Marketplace. No Microsoft
+          account required.
         </p>
       </div>
 
-      {/* Why worktrees */}
       <section className="space-y-4">
-        <h2 className="text-xl font-medium">Why worktrees?</h2>
+        <h2 className="text-xl font-medium">Installing extensions</h2>
         <p className="text-white/60 leading-relaxed">
-          Without worktrees, running multiple agents on the same repo means they share the working
-          directory. One agent's changes interfere with another's. You can't safely run parallel
-          tasks.
+          Open the Extensions view from the Dock (puzzle icon, bottom left) and search as you
+          would in VS Code. Extensions install from OpenVSX automatically.
         </p>
         <p className="text-white/60 leading-relaxed">
-          With worktrees, each agent gets its own directory and branch. They can work simultaneously
-          without conflict. When an agent finishes, you review the diff, merge the branch, and
-          archive the worktree.
+          You can also install from a <code className="font-mono">.vsix</code> file by opening
+          the Extensions view, clicking the <code className="font-mono">···</code> menu, and
+          choosing <strong className="text-white/80">Install from VSIX…</strong>
         </p>
       </section>
 
-      {/* Directory structure */}
       <section className="space-y-4">
-        <h2 className="text-xl font-medium">Directory structure</h2>
+        <h2 className="text-xl font-medium">What works</h2>
         <p className="text-white/60 leading-relaxed">
-          Labonair creates worktrees under <code className="font-mono">$LABONAIR_HOME/worktrees/</code>,
-          organized by a short hash of the source checkout path:
+          The vast majority of language and tooling extensions are available on OpenVSX:
         </p>
-        <Code>
-          <pre className="text-white/80">{`~/.labonair/worktrees/
-├── 1vnnm9k3/
-│   ├── tidy-fox/            # random slug
-│   └── bold-owl/            # random slug
-└── 4k8q2d1p/
-    └── swift-hare/          # random slug`}</pre>
-        </Code>
-        <p className="text-white/60 leading-relaxed">
-          The hash avoids collisions between repositories that share the same directory or remote
-          name. Worktree directory names are random slugs — the branch name is separate and chosen
-          when you first launch an agent in the worktree.
-        </p>
+        <ul className="text-white/60 space-y-1 list-disc list-inside columns-2">
+          <li>Python, Rust, Go, Java</li>
+          <li>C/C++, C#, Zig</li>
+          <li>Vue, React, Svelte</li>
+          <li>ESLint, Prettier</li>
+          <li>Docker, Kubernetes</li>
+          <li>GitLens (open-source fork)</li>
+          <li>Themes and icon packs</li>
+          <li>Vim / Evil mode</li>
+          <li>REST Client, Thunder Client</li>
+          <li>Markdown, LaTeX, MDX</li>
+        </ul>
       </section>
 
-      {/* Branches */}
       <section className="space-y-4">
-        <h2 className="text-xl font-medium">Branches</h2>
+        <h2 className="text-xl font-medium">What doesn't work</h2>
         <p className="text-white/60 leading-relaxed">
-          When you create a worktree, Labonair generates a random directory name. The branch name is
-          set when you first launch an agent — Labonair generates one automatically.
-        </p>
-        <p className="text-white/60 leading-relaxed">
-          This means the worktree directory and branch are independent. You can rename the branch
-          later without affecting the worktree path.
-        </p>
-      </section>
-
-      {/* Multiple agents */}
-      <section className="space-y-4">
-        <h2 className="text-xl font-medium">Multiple agents per worktree</h2>
-        <p className="text-white/60 leading-relaxed">
-          You can launch multiple agents into the same worktree. They share the working directory
-          and branch, which is useful when you want agents to collaborate on the same feature or
-          when one agent hands off to another.
-        </p>
-        <p className="text-white/60 leading-relaxed">
-          Be mindful of conflicts — agents working on the same files simultaneously can step on each
-          other. This works best when agents have distinct responsibilities or run sequentially.
-        </p>
-      </section>
-
-      {/* labonair.json */}
-      <section className="space-y-4">
-        <h2 className="text-xl font-medium">Lifecycle hooks with labonair.json</h2>
-        <p className="text-white/60 leading-relaxed">
-          When Labonair creates a worktree, it's a fresh checkout. Dependencies aren't installed,
-          config files aren't copied. You can automate setup by creating a{" "}
-          <code className="font-mono">labonair.json</code> file in your repository root:
-        </p>
-        <Code>
-          <pre className="text-white/80">{`{
-  "worktree": {
-    "setup": [
-      "npm ci",
-      "cp \\"$LABONAIR_SOURCE_CHECKOUT_PATH/.env\\" \\"$LABONAIR_WORKTREE_PATH/.env\\""
-    ]
-  }
-}`}</pre>
-        </Code>
-        <p className="text-white/60 leading-relaxed">
-          The <code className="font-mono">setup</code> array contains shell commands that run after
-          the worktree is created. Use it to install dependencies, copy local config files, or run
-          any other initialization.
-        </p>
-        <p className="text-white/60 leading-relaxed">
-          You can also add a <code className="font-mono">teardown</code> array for cleanup commands
-          that run before Labonair removes the worktree directory during archive:
-        </p>
-        <Code>
-          <pre className="text-white/80">{`{
-  "worktree": {
-    "teardown": [
-      "pkill -f \\"vite --port $LABONAIR_WORKTREE_PORT\\" || true",
-      "rm -rf \\"$LABONAIR_WORKTREE_PATH/.cache\\""
-    ]
-  }
-}`}</pre>
-        </Code>
-        <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-4 text-white/80">
-          <strong>Important:</strong> Setup commands come from{" "}
-          <code className="font-mono">labonair.json</code> in the selected base branch. If you pick{" "}
-          <code className="font-mono">main</code>, Labonair reads the committed file on{" "}
-          <code className="font-mono">main</code>. Local or uncommitted changes in another branch
-          are not used for that worktree.
-        </div>
-      </section>
-
-      {/* Environment variables */}
-      <section className="space-y-4">
-        <h2 className="text-xl font-medium">Environment variables</h2>
-        <p className="text-white/60 leading-relaxed">
-          Setup and teardown commands have access to these environment variables:
+          These extensions rely on proprietary Microsoft APIs or hardcoded Microsoft endpoints and
+          are intentionally incompatible:
         </p>
         <ul className="text-white/60 space-y-2 list-disc list-inside">
           <li>
-            <code className="font-mono">$LABONAIR_SOURCE_CHECKOUT_PATH</code> — your source checkout
-            path (original repository root)
+            <strong className="text-white/80">GitHub Copilot (original)</strong> — use
+            Labonair's native AI Core instead
           </li>
           <li>
-            <code className="font-mono">$LABONAIR_ROOT_PATH</code> — legacy alias of{" "}
-            <code className="font-mono">$LABONAIR_SOURCE_CHECKOUT_PATH</code>
+            <strong className="text-white/80">Live Share (original)</strong> — Microsoft
+            server-dependent; P2P Live Share is on the roadmap
           </li>
           <li>
-            <code className="font-mono">$LABONAIR_WORKTREE_PATH</code> — the new worktree directory
-          </li>
-          <li>
-            <code className="font-mono">$LABONAIR_BRANCH_NAME</code> — the branch name created
-          </li>
-          <li>
-            <code className="font-mono">$LABONAIR_WORKTREE_PORT</code> — the worktree port, when
-            runtime metadata exists
+            Extensions that explicitly call{" "}
+            <code className="font-mono">vscode.microsoft.com</code> APIs
           </li>
         </ul>
+      </section>
+
+      <section className="space-y-4">
+        <h2 className="text-xl font-medium">Extension data</h2>
         <p className="text-white/60 leading-relaxed">
-          Use <code className="font-mono">$LABONAIR_SOURCE_CHECKOUT_PATH</code> to copy files that
-          shouldn't be in git (like <code className="font-mono">.env</code>) from your source
-          checkout to the worktree.
-        </p>
-        <p className="text-white/60 leading-relaxed">
-          <code className="font-mono">$LABONAIR_WORKTREE_PORT</code> is available when the worktree was
-          bootstrapped with a port. That makes it useful for both starting services in setup and
-          stopping them again in teardown.
+          Extensions install to and run from{" "}
+          <code className="font-mono">~/.labonair/extensions/</code>. Each extension runs in an
+          isolated Extension Host process, same as VS Code.
         </p>
       </section>
 
-      {/* Teardown */}
       <section className="space-y-4">
-        <h2 className="text-xl font-medium">Teardown</h2>
+        <h2 className="text-xl font-medium">Migrating from VS Code</h2>
         <p className="text-white/60 leading-relaxed">
-          Teardown runs during archive, before Labonair removes the worktree directory. Use it for
-          cleanup that needs access to the worktree path or its assigned port.
+          Export your current VS Code extension list, then search for each on OpenVSX:
         </p>
+        <div className="bg-card border border-border rounded-lg p-4 font-mono text-sm text-white/70">
+          <p>
+            <span className="text-muted-foreground select-none">$ </span>
+            <span>code --list-extensions</span>
+          </p>
+        </div>
         <p className="text-white/60 leading-relaxed">
-          Common uses include stopping dev servers on{" "}
-          <code className="font-mono">$LABONAIR_WORKTREE_PORT</code>, deleting generated files, or
-          deregistering services tied to that worktree.
-        </p>
-        <Code>
-          <pre className="text-white/80">{`{
-  "worktree": {
-    "setup": [
-      "npm ci",
-      "nohup npm run dev -- --port $LABONAIR_WORKTREE_PORT > \\"$LABONAIR_WORKTREE_PATH/dev.log\\" 2>&1 &"
-    ],
-    "teardown": [
-      "pkill -f \\"npm run dev -- --port $LABONAIR_WORKTREE_PORT\\" || true",
-      "rm -f \\"$LABONAIR_WORKTREE_PATH/dev.log\\""
-    ]
-  }
-}`}</pre>
-        </Code>
-      </section>
-
-      {/* Common patterns */}
-      <section className="space-y-4">
-        <h2 className="text-xl font-medium">Common patterns</h2>
-
-        <h3 className="text-lg font-medium mt-6">Node.js / npm</h3>
-        <Code>
-          <pre className="text-white/80">{`{
-  "worktree": {
-    "setup": ["npm ci"]
-  }
-}`}</pre>
-        </Code>
-
-        <h3 className="text-lg font-medium mt-6">Python / Poetry</h3>
-        <Code>
-          <pre className="text-white/80">{`{
-  "worktree": {
-    "setup": ["poetry install"]
-  }
-}`}</pre>
-        </Code>
-
-        <h3 className="text-lg font-medium mt-6">Copy environment files</h3>
-        <Code>
-          <pre className="text-white/80">{`{
-  "worktree": {
-    "setup": [
-      "npm ci",
-      "cp \\"$LABONAIR_SOURCE_CHECKOUT_PATH/.env\\" \\"$LABONAIR_WORKTREE_PATH/.env\\"",
-      "cp \\"$LABONAIR_SOURCE_CHECKOUT_PATH/.env.local\\" \\"$LABONAIR_WORKTREE_PATH/.env.local\\""
-    ]
-  }
-}`}</pre>
-        </Code>
-
-        <h3 className="text-lg font-medium mt-6">Run database migrations</h3>
-        <Code>
-          <pre className="text-white/80">{`{
-  "worktree": {
-    "setup": [
-      "npm ci",
-      "cp \\"$LABONAIR_SOURCE_CHECKOUT_PATH/.env\\" \\"$LABONAIR_WORKTREE_PATH/.env\\"",
-      "npm run db:migrate"
-    ]
-  }
-}`}</pre>
-        </Code>
-      </section>
-
-      {/* Workflow */}
-      <section className="space-y-4">
-        <h2 className="text-xl font-medium">Workflow</h2>
-        <p className="text-white/60 leading-relaxed">The typical workflow is:</p>
-        <ol className="text-white/60 space-y-2 list-decimal list-inside">
-          <li>Create a worktree — Labonair creates the directory and runs setup</li>
-          <li>Launch an agent — Labonair creates or assigns a branch</li>
-          <li>Agent works in isolation — changes stay in its worktree</li>
-          <li>Review the diff — compare against the base branch</li>
-          <li>Merge or discard — if approved, merge the branch; otherwise archive</li>
-          <li>Archive the worktree — cleans up the directory and optionally the branch</li>
-        </ol>
-        <p className="text-white/60 leading-relaxed">
-          You can run multiple agents in different worktrees simultaneously. Each worktree has its
-          own branch and working directory.
-        </p>
-      </section>
-
-      {/* CLI reference */}
-      <section className="space-y-4">
-        <h2 className="text-xl font-medium">CLI reference</h2>
-        <p className="text-white/60 leading-relaxed">Create an agent in a new worktree:</p>
-        <Code>
-          <pre className="text-white/80">{`labonair run --worktree feature-auth --base main "implement auth"`}</pre>
-        </Code>
-        <p className="text-white/60 leading-relaxed">List all worktrees:</p>
-        <Code>
-          <pre className="text-white/80">{`labonair worktree ls`}</pre>
-        </Code>
-        <p className="text-white/60 leading-relaxed">
-          Archive a worktree (stops agents, removes directory):
-        </p>
-        <Code>
-          <pre className="text-white/80">{`labonair worktree archive feature-auth`}</pre>
-        </Code>
-      </section>
-
-      {/* Metadata */}
-      <section className="space-y-4">
-        <h2 className="text-xl font-medium">Metadata</h2>
-        <p className="text-white/60 leading-relaxed">
-          Labonair stores metadata in each worktree's git directory to track the base branch. This is
-          used for diff operations and to know what branch to merge into.
-        </p>
-        <p className="text-white/60 leading-relaxed">
-          You don't need to manage this manually — Labonair handles it when creating and archiving
-          worktrees.
+          Search each ID on{" "}
+          <a
+            href="https://open-vsx.org"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline hover:text-white/80"
+          >
+            open-vsx.org
+          </a>{" "}
+          to verify availability before installing in Labonair.
         </p>
       </section>
     </div>

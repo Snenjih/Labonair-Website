@@ -4,147 +4,145 @@ import { pageMeta } from "~/meta";
 export const Route = createFileRoute("/docs/voice")({
   head: () => ({
     meta: pageMeta(
-      "Voice - Labonair Docs",
-      "Labonair voice architecture, local-first model execution, and provider configuration.",
+      "AI Providers - Labonair Docs",
+      "Configure BYOK AI providers in Labonair: OpenAI, Anthropic, Google, DeepSeek, and Ollama.",
     ),
   }),
-  component: VoiceDocs,
+  component: AIProvidersDocs,
 });
 
-function VoiceDocs() {
+function AIProvidersDocs() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-medium font-title mb-4">Voice</h1>
+        <h1 className="text-3xl font-medium font-title mb-4">AI Providers</h1>
         <p className="text-white/60 leading-relaxed">
-          Labonair has first-class voice support for dictation and realtime conversations with your
-          coding environment.
+          Labonair has a built-in Dual-Engine AI Core. No GitHub Copilot subscription needed — you
+          bring your own API keys. Keys are stored in your OS keychain, never in plaintext.
         </p>
       </div>
 
       <section className="space-y-4">
-        <h2 className="text-xl font-medium">Philosophy</h2>
-        <p className="text-white/60 leading-relaxed">
-          Voice is local-first. You can run speech fully on-device, or choose OpenAI for speech
-          features. For voice reasoning/orchestration, Labonair reuses agent providers already
-          installed and authenticated on your machine.
-        </p>
-        <p className="text-white/60 leading-relaxed">
-          This keeps credentials and execution in your environment and avoids introducing a separate
-          cloud-only voice stack.
-        </p>
+        <h2 className="text-xl font-medium">Setting up a provider</h2>
+        <ol className="text-white/60 space-y-2 list-decimal list-inside">
+          <li>
+            Open the <strong className="text-white/80">Chat Panel</strong> from the Dock (bottom
+            left AI icon)
+          </li>
+          <li>
+            Click the <strong className="text-white/80">Settings Tab</strong>
+          </li>
+          <li>Select a provider and enter your API key</li>
+          <li>
+            The key is saved to your OS keychain — it will never appear in{" "}
+            <code className="font-mono">settings.json</code>
+          </li>
+        </ol>
       </section>
 
       <section className="space-y-4">
-        <h2 className="text-xl font-medium">Architecture</h2>
+        <h2 className="text-xl font-medium">Supported providers</h2>
+        <div className="bg-card border border-border rounded-lg overflow-hidden">
+          <table className="w-full text-sm text-white/60">
+            <thead className="border-b border-border">
+              <tr>
+                <th className="text-left px-4 py-3 text-white/80">Provider</th>
+                <th className="text-left px-4 py-3 text-white/80">Models</th>
+                <th className="text-left px-4 py-3 text-white/80">Offline</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-border">
+              <tr>
+                <td className="px-4 py-3">OpenAI</td>
+                <td className="px-4 py-3">GPT-4o, GPT-4 Turbo</td>
+                <td className="px-4 py-3">No</td>
+              </tr>
+              <tr>
+                <td className="px-4 py-3">Anthropic</td>
+                <td className="px-4 py-3">Claude 3.5 Sonnet, Claude 3 Opus</td>
+                <td className="px-4 py-3">No</td>
+              </tr>
+              <tr>
+                <td className="px-4 py-3">Google</td>
+                <td className="px-4 py-3">Gemini Pro, Gemini Flash</td>
+                <td className="px-4 py-3">No</td>
+              </tr>
+              <tr>
+                <td className="px-4 py-3">DeepSeek</td>
+                <td className="px-4 py-3">DeepSeek Coder, DeepSeek Chat</td>
+                <td className="px-4 py-3">No</td>
+              </tr>
+              <tr>
+                <td className="px-4 py-3 font-medium text-white/80">Ollama</td>
+                <td className="px-4 py-3">Any local model</td>
+                <td className="px-4 py-3 text-green-400/80">Yes — 100% offline</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section className="space-y-4">
+        <h2 className="text-xl font-medium">Direct API Mode</h2>
+        <p className="text-white/60 leading-relaxed">
+          Chat directly with your chosen model. Supports:
+        </p>
         <ul className="text-white/60 space-y-2 list-disc list-inside">
           <li>
-            Speech I/O: STT and TTS providers per feature (<code className="font-mono">local</code>{" "}
-            or <code className="font-mono">openai</code>)
-          </li>
-          <li>Local speech runtime: ONNX models executed on CPU by default</li>
-          <li>
-            Voice LLM orchestration: hidden agent session using your configured provider (
-            <code className="font-mono">claude</code>, <code className="font-mono">codex</code>, or{" "}
-            <code className="font-mono">opencode</code>)
-          </li>
-          <li>Tooling path: MCP stdio bridge for voice tools and agent control</li>
-        </ul>
-      </section>
-
-      <section className="space-y-4">
-        <h2 className="text-xl font-medium">Local Speech</h2>
-        <p className="text-white/60 leading-relaxed">
-          Local speech defaults to model IDs{" "}
-          <code className="font-mono">parakeet-tdt-0.6b-v3-int8</code> (STT) and{" "}
-          <code className="font-mono">kokoro-en-v0_19</code> (TTS, speaker 0 / voice 00).
-        </p>
-        <p className="text-white/60 leading-relaxed">
-          Missing models are downloaded at daemon startup into{" "}
-          <code className="font-mono">$LABONAIR_HOME/models/local-speech</code>. Downloads happen only
-          for missing files.
-        </p>
-        <pre className="bg-card border border-border rounded-lg p-4 font-mono text-sm overflow-x-auto text-white/80">
-          {`{
-  "version": 1,
-  "features": {
-    "dictation": { "stt": { "provider": "local", "model": "parakeet-tdt-0.6b-v3-int8" } },
-    "voiceMode": {
-      "llm": { "provider": "claude", "model": "haiku" },
-      "stt": { "provider": "local", "model": "parakeet-tdt-0.6b-v3-int8" },
-      "tts": { "provider": "local", "model": "kokoro-en-v0_19", "speakerId": 0 }
-    }
-  },
-  "providers": {
-    "local": {
-      "modelsDir": "~/.labonair/models/local-speech"
-    }
-  }
-}`}
-        </pre>
-      </section>
-
-      <section className="space-y-4">
-        <h2 className="text-xl font-medium">OpenAI Speech Option</h2>
-        <p className="text-white/60 leading-relaxed">
-          You can switch dictation, voice STT, and voice TTS to OpenAI by setting provider fields to{" "}
-          <code className="font-mono">openai</code> and providing{" "}
-          <code className="font-mono">OPENAI_API_KEY</code>.
-        </p>
-        <pre className="bg-card border border-border rounded-lg p-4 font-mono text-sm overflow-x-auto text-white/80">
-          {`{
-  "version": 1,
-  "features": {
-    "dictation": { "stt": { "provider": "openai" } },
-    "voiceMode": {
-      "stt": { "provider": "openai" },
-      "tts": { "provider": "openai" }
-    }
-  },
-  "providers": {
-    "openai": { "apiKey": "..." }
-  }
-}`}
-        </pre>
-      </section>
-
-      <section className="space-y-4">
-        <h2 className="text-xl font-medium">Environment Variables</h2>
-        <ul className="text-white/60 space-y-2 list-disc list-inside">
-          <li>
-            <code className="font-mono">OPENAI_API_KEY</code> — OpenAI speech credentials
+            <strong className="text-white/80">Multimodal input</strong> — drag images into the
+            chat window
           </li>
           <li>
-            <code className="font-mono">LABONAIR_VOICE_LLM_PROVIDER</code> — voice agent provider
-            override
+            <strong className="text-white/80">Context references</strong> — type{" "}
+            <code className="font-mono">@filename</code> to include any file's contents
           </li>
           <li>
-            <code className="font-mono">LABONAIR_LOCAL_MODELS_DIR</code> — local model storage
-            directory
-          </li>
-          <li>
-            <code className="font-mono">LABONAIR_DICTATION_LOCAL_STT_MODEL</code> — local dictation STT
-            model ID
-          </li>
-          <li>
-            <code className="font-mono">LABONAIR_VOICE_LOCAL_STT_MODEL</code>,{" "}
-            <code className="font-mono">LABONAIR_VOICE_LOCAL_TTS_MODEL</code> — local voice STT/TTS
-            model IDs
-          </li>
-          <li>
-            <code className="font-mono">LABONAIR_VOICE_LOCAL_TTS_SPEAKER_ID</code>,{" "}
-            <code className="font-mono">LABONAIR_VOICE_LOCAL_TTS_SPEED</code> — optional local voice
-            TTS tuning
+            <strong className="text-white/80">Streaming responses</strong> — output streams token
+            by token as the model generates
           </li>
         </ul>
       </section>
 
       <section className="space-y-4">
-        <h2 className="text-xl font-medium">Operational Notes</h2>
+        <h2 className="text-xl font-medium">Running Ollama (offline AI)</h2>
         <p className="text-white/60 leading-relaxed">
-          Realtime voice can launch and control agents. Treat voice prompts with the same care as
-          direct agent instructions, especially when specifying working directories or destructive
-          operations.
+          Install{" "}
+          <a
+            href="https://ollama.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline hover:text-white/80"
+          >
+            Ollama
+          </a>
+          , pull a model, then select Ollama in the Chat Panel settings. No API key needed.
+        </p>
+        <div className="bg-card border border-border rounded-lg p-4 font-mono text-sm space-y-1 text-white/70">
+          <p>
+            <span className="text-muted-foreground select-none">$ </span>
+            <span>ollama pull llama3</span>
+          </p>
+          <p>
+            <span className="text-muted-foreground select-none">$ </span>
+            <span>ollama pull codellama</span>
+          </p>
+        </div>
+        <p className="text-white/60 leading-relaxed">
+          Ollama runs a local server at{" "}
+          <code className="font-mono">http://localhost:11434</code>. Labonair connects to it
+          automatically.
+        </p>
+      </section>
+
+      <section className="space-y-4">
+        <h2 className="text-xl font-medium">ACP Agents</h2>
+        <p className="text-white/60 leading-relaxed">
+          Beyond chat, Labonair supports autonomous coding agents via the Agent Client Protocol.
+          See{" "}
+          <a href="/docs/skills" className="underline hover:text-white/80">
+            ACP Agents
+          </a>{" "}
+          for details.
         </p>
       </section>
     </div>

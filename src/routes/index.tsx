@@ -5,8 +5,8 @@ import { pageMeta } from "~/meta";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: pageMeta(
-"Labonair – Run Claude Code, Codex, and OpenCode from everywhere",
-      "A self-hosted daemon for Claude Code, Codex, and OpenCode. Agents run on your machine with your full dev environment. Connect from phone, desktop, or web.",
+      "Labonair – The Zen-Mode First Editor for the AI Era",
+      "A VS Code fork built for focus, privacy, and native AI. BYOK support for OpenAI, Anthropic, Google, DeepSeek, and Ollama. Telemetry removed. MIT licensed.",
     ),
   }),
   component: Home,
@@ -17,12 +17,12 @@ function Home() {
     <LandingPage
       title={
         <>
-          Orchestrate coding agents
+          The Zen-Mode First Editor
           <br />
-          from your desk and your phone
+          for the AI Era
         </>
       }
-      subtitle="Run any coding agent from your phone, desktop, or terminal. Self-hosted, multi-provider, open source."
+      subtitle="A VS Code fork built for focus, privacy, and native AI orchestration. Bring your own key. Own your data. Own your editor."
     />
   );
 }

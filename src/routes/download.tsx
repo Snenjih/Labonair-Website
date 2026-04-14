@@ -3,15 +3,10 @@ import { CommandDialog } from "~/components/command-dialog";
 import { pageMeta } from "~/meta";
 import {
   downloadUrls,
-  appStoreUrl,
-  playStoreUrl,
-  webAppUrl,
   AppleIcon,
-  AndroidIcon,
   WindowsIcon,
   LinuxIcon,
   TerminalIcon,
-  GlobeIcon,
 } from "~/downloads";
 import { useRelease } from "~/routes/__root";
 import "~/styles.css";
@@ -147,75 +142,43 @@ function Download() {
           </div>
         </section>
 
-        {/* Mobile */}
-        <section className="rounded-xl border border-border bg-card/40 p-6 md:p-8 mb-6">
-          <div className="flex items-center justify-between mb-8">
-            <h2 className="text-2xl font-semibold">Mobile</h2>
-            <PhoneIcon className="h-5 w-5 text-muted-foreground" />
-          </div>
-
-          <div className="divide-y divide-border">
-            {/* Android */}
-            <div className="flex items-center justify-between py-5 first:pt-0 last:pb-0">
-              <div className="flex items-center gap-3">
-                <AndroidIcon className="h-5 w-5 text-foreground" />
-                <span className="font-medium">Android</span>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                <DownloadPill href={playStoreUrl} label="Play Store" external />
-                <DownloadPill href={urls.androidApk} label="APK" />
-              </div>
-            </div>
-
-            {/* iOS */}
-            <div className="flex items-center justify-between py-5 first:pt-0 last:pb-0">
-              <div className="flex items-center gap-3">
-                <AppleIcon className="h-5 w-5 text-foreground" />
-                <span className="font-medium">iOS</span>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                <DownloadPill href={appStoreUrl} label="App Store" external />
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Web & CLI */}
+        {/* Homebrew */}
         <section className="rounded-xl border border-border bg-card/40 p-6 md:p-8">
           <div className="flex items-center justify-between mb-8">
-            <h2 className="text-2xl font-semibold">Web & CLI</h2>
+            <h2 className="text-2xl font-semibold">Homebrew</h2>
             <TerminalIcon className="h-5 w-5 text-muted-foreground" />
           </div>
 
           <div className="divide-y divide-border">
             <div className="flex items-center justify-between py-5 first:pt-0 last:pb-0">
               <div className="flex items-center gap-3">
-                <GlobeIcon className="h-5 w-5 text-foreground" />
-                <span className="font-medium">Web App</span>
+                <AppleIcon className="h-5 w-5 text-foreground" />
+                <span className="font-medium">macOS (recommended)</span>
               </div>
               <div className="flex flex-wrap gap-2">
-                <DownloadPill href={webAppUrl} label="Open" external />
-              </div>
-            </div>
-
-            <div className="flex items-center justify-between py-5 first:pt-0 last:pb-0">
-              <div className="flex items-center gap-3">
-                <TerminalIcon className="h-5 w-5 text-foreground" />
-                <span className="font-medium">CLI</span>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                <code className="text-sm text-muted-foreground font-mono bg-muted px-3 py-1.5 rounded-lg">
-                  npm install -g @labonair/cli
-                </code>
+                <CommandDialog
+                  trigger={
+                    <span className="inline-flex items-center justify-center rounded-full bg-foreground px-4 py-1.5 text-sm font-medium text-background hover:bg-foreground/85 transition-colors cursor-pointer">
+                      Install
+                    </span>
+                  }
+                  title="Install via Homebrew"
+                  command="brew tap Snenjih/tap && brew install --cask labonair"
+                />
               </div>
             </div>
           </div>
+
+          <p className="text-xs text-muted-foreground mt-4">
+            Homebrew removes the macOS quarantine attribute automatically. Update with{" "}
+            <code className="font-mono">brew upgrade labonair</code>.
+          </p>
         </section>
 
         <p className="text-center text-xs text-muted-foreground mt-8">
           All releases are available on{" "}
           <a
-            href="https://github.com/Snenjih/Labonair-Website/releases"
+            href="https://github.com/Snenjih/Labonair/releases"
             target="_blank"
             rel="noopener noreferrer"
             className="underline hover:text-foreground transition-colors"
