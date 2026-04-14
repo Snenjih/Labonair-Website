@@ -14,8 +14,8 @@ interface GitHubRelease {
 
 const REQUIRED_ASSET_PATTERNS = [
   /Labonair-.*-arm64\.dmg$/, // Mac Apple Silicon
-  /Labonair-.*-x86_64\.AppImage$/, // Linux AppImage
   /Labonair-Setup-.*\.exe$/, // Windows
+  /Labonair-.*\.AppImage$/, // Linux AppImage
 ];
 
 function hasRequiredAssets(release: GitHubRelease): boolean {
@@ -28,7 +28,7 @@ function versionFromTag(tag: string): string {
   return tag.replace(/^v/, "");
 }
 
-const GITHUB_RELEASES_URL = "https://api.github.com/repos/Snenjih/Labonair-Website/releases?per_page=10";
+const GITHUB_RELEASES_URL = "https://api.github.com/repos/Snenjih/Labonair/releases?per_page=10";
 
 async function fetchLatestReadyRelease(): Promise<string> {
   const fallback = websitePackage.version.replace(/-.*$/, "");

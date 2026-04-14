@@ -196,6 +196,12 @@ brew install --cask labonair`}</pre>
             — configure BYOK providers or Ollama
           </li>
           <li>
+            <a href="/docs/connectivity" className="underline hover:text-white/80">
+              Connectivity
+            </a>{" "}
+            — SSH/SFTP management extension
+          </li>
+          <li>
             <a href="/docs/skills" className="underline hover:text-white/80">
               ACP Agents
             </a>{" "}

@@ -18,6 +18,7 @@ const sitemapPages = [
   "/docs/best-practices",
   "/docs/cli",
   "/docs/configuration",
+  "/docs/connectivity",
   "/docs/skills",
   "/docs/security",
   "/docs/updates",

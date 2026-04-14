@@ -29,8 +29,16 @@ interface LandingPageProps {
 export function LandingPage({ title, subtitle }: LandingPageProps) {
   return (
     <CursorFieldProvider>
-      {/* Hero section with background image */}
-      <div className="relative bg-cover bg-center bg-no-repeat">
+      {/* Hero section with grid background */}
+      <div className="relative" style={{ backgroundColor: "#101615" }}>
+        {/* Grid overlay */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            backgroundImage: `linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px)`,
+            backgroundSize: "24px 24px",
+          }}
+        />
         <div className="relative p-6 pb-10 md:px-32 md:pt-20 md:pb-12 max-w-7xl mx-auto">
           <Nav />
           <Hero title={title} subtitle={subtitle} />
@@ -48,6 +56,15 @@ export function LandingPage({ title, subtitle }: LandingPageProps) {
             <HeroMockup />
           </div>
         </motion.div>
+
+        {/* Gradient fade from hero grid to background */}
+        <div
+          className="absolute bottom-0 left-0 right-0 h-48 pointer-events-none"
+          style={{
+            background:
+              "linear-gradient(to bottom, transparent, var(--color-background))",
+          }}
+        />
       </div>
 
       {/* Content section */}
@@ -290,11 +307,31 @@ function PrinciplesSection() {
 
 function MultiProviderSection() {
   const providers = [
-    { name: "OpenAI", subtitle: "GPT-4o, GPT-4 Turbo" },
-    { name: "Anthropic", subtitle: "Claude 3.5 Sonnet, Opus" },
-    { name: "Google", subtitle: "Gemini Pro, Gemini Flash" },
-    { name: "DeepSeek", subtitle: "DeepSeek Coder, Chat" },
-    { name: "Ollama", subtitle: "100% offline, any model" },
+    {
+      name: "OpenAI",
+      subtitle: "GPT-4o, GPT-4 Turbo",
+      logo: "https://cdn.worldvectorlogo.com/logos/openai-2.svg"
+    },
+    {
+      name: "Anthropic",
+      subtitle: "Claude 3.5 Sonnet, Opus",
+      logo: "https://cdn.worldvectorlogo.com/logos/anthropic-2.svg"
+    },
+    {
+      name: "Google",
+      subtitle: "Gemini Pro, Gemini Flash",
+      logo: "https://cdn.worldvectorlogo.com/logos/google-2015.svg"
+    },
+    {
+      name: "DeepSeek",
+      subtitle: "DeepSeek Coder, Chat",
+      logo: "https://cdn.worldvectorlogo.com/logos/deepseek-2.svg"
+    },
+    {
+      name: "Ollama",
+      subtitle: "100% offline, any model",
+      logo: "https://cdn.worldvectorlogo.com/logos/ollama.svg"
+    },
   ];
 
   return (
@@ -306,9 +343,13 @@ function MultiProviderSection() {
         {providers.slice(0, 3).map((p) => (
           <div
             key={p.name}
-            className="flex flex-col gap-1.5 rounded-xl border border-white/10 bg-white/[0.03] px-5 py-4"
+            className="flex flex-col gap-3 rounded-xl border border-white/10 bg-white/[0.03] px-5 py-4"
           >
-            <span className="font-medium">{p.name}</span>
+            <img
+              src={p.logo}
+              alt={p.name}
+              className="h-8 w-auto object-contain"
+            />
             <span className="text-xs text-white/40">{p.subtitle}</span>
           </div>
         ))}
@@ -317,9 +358,13 @@ function MultiProviderSection() {
         {providers.slice(3).map((p) => (
           <div
             key={p.name}
-            className="flex flex-col gap-1.5 rounded-xl border border-white/10 bg-white/[0.03] px-5 py-4"
+            className="flex flex-col gap-3 rounded-xl border border-white/10 bg-white/[0.03] px-5 py-4"
           >
-            <span className="font-medium">{p.name}</span>
+            <img
+              src={p.logo}
+              alt={p.name}
+              className="h-8 w-auto object-contain"
+            />
             <span className="text-xs text-white/40">{p.subtitle}</span>
           </div>
         ))}
@@ -918,14 +963,25 @@ function GetStarted() {
       </div>
       <div className="flex flex-wrap items-center gap-2 pt-6">
         <span className="text-xs text-white/40">AI Providers</span>
-        <div className="flex flex-wrap items-center gap-1.5">
-          {["OpenAI", "Anthropic", "Google", "DeepSeek", "Ollama"].map((name) => (
-            <span
-              key={name}
-              className="text-xs px-2 py-0.5 rounded-full border border-white/15 text-white/50"
+        <div className="flex flex-wrap items-center gap-2">
+          {[
+            { name: "OpenAI", logo: "https://cdn.worldvectorlogo.com/logos/openai-2.svg" },
+            { name: "Anthropic", logo: "https://cdn.worldvectorlogo.com/logos/anthropic-2.svg" },
+            { name: "Google", logo: "https://cdn.worldvectorlogo.com/logos/google-2015.svg" },
+            { name: "DeepSeek", logo: "https://cdn.worldvectorlogo.com/logos/deepseek-2.svg" },
+            { name: "Ollama", logo: "https://cdn.worldvectorlogo.com/logos/ollama.svg" },
+          ].map((provider) => (
+            <div
+              key={provider.name}
+              className="flex items-center gap-1 px-2 py-1 rounded-full border border-white/15 bg-white/5"
             >
-              {name}
-            </span>
+              <img
+                src={provider.logo}
+                alt={provider.name}
+                className="h-4 w-4 object-contain"
+              />
+              <span className="text-xs text-white/50">{provider.name}</span>
+            </div>
           ))}
         </div>
       </div>

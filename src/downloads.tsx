@@ -1,7 +1,7 @@
 import * as React from "react";
 
 export function releaseBase(version: string) {
-  return `https://github.com/Snenjih/Labonair-Website/releases/download/v${version}`;
+  return `https://github.com/Snenjih/Labonair/releases/download/v${version}`;
 }
 
 export function downloadUrls(version: string) {

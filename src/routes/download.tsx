@@ -15,7 +15,7 @@ export const Route = createFileRoute("/download")({
   head: () => ({
     meta: pageMeta(
       "Download - Labonair",
-      "Download Labonair for macOS, Windows, Linux, iOS, and Android. Your dev environment, in your pocket.",
+      "Download Labonair for macOS, Windows, and Linux.",
     ),
   }),
   component: Download,
@@ -65,7 +65,7 @@ function Download() {
               </svg>
             </a>
             <a
-              href="https://github.com/Snenjih/Labonair-Website"
+              href="https://github.com/Snenjih/Labonair"
               target="_blank"
               rel="noopener noreferrer"
               aria-label="GitHub"
@@ -87,10 +87,10 @@ function Download() {
         <h1 className="text-3xl md:text-4xl font-semibold tracking-tight mb-2">Download</h1>
         <p className="text-muted-foreground mb-10">v{version}</p>
 
-        {/* Desktop */}
+        {/* Desktop Downloads */}
         <section className="rounded-xl border border-border bg-card/40 p-6 md:p-8 mb-6">
           <div className="flex items-center justify-between mb-8">
-            <h2 className="text-2xl font-semibold">Desktop</h2>
+            <h2 className="text-2xl font-semibold">Download</h2>
             <MonitorIcon className="h-5 w-5 text-muted-foreground" />
           </div>
 
@@ -104,15 +104,6 @@ function Download() {
               <div className="flex flex-wrap items-center gap-2">
                 <DownloadPill href={urls.macAppleSilicon} label="Apple Silicon" />
                 <DownloadPill href={urls.macIntel} label="Intel" />
-                <CommandDialog
-                  trigger={
-                    <span className="inline-flex items-center justify-center rounded-full bg-foreground px-4 py-1.5 text-sm font-medium text-background hover:bg-foreground/85 transition-colors">
-                      Homebrew
-                    </span>
-                  }
-                  title="Install via Homebrew"
-                  command="brew install --cask labonair"
-                />
               </div>
             </div>
 
@@ -142,37 +133,34 @@ function Download() {
           </div>
         </section>
 
-        {/* Homebrew */}
+        {/* CLI / Package Manager Installation */}
         <section className="rounded-xl border border-border bg-card/40 p-6 md:p-8">
           <div className="flex items-center justify-between mb-8">
-            <h2 className="text-2xl font-semibold">Homebrew</h2>
+            <h2 className="text-2xl font-semibold">Command Line Installation</h2>
             <TerminalIcon className="h-5 w-5 text-muted-foreground" />
           </div>
 
           <div className="divide-y divide-border">
+            {/* Homebrew - macOS & Linux */}
             <div className="flex items-center justify-between py-5 first:pt-0 last:pb-0">
               <div className="flex items-center gap-3">
                 <AppleIcon className="h-5 w-5 text-foreground" />
-                <span className="font-medium">macOS (recommended)</span>
+                <span className="font-medium">Homebrew (macOS & Linux)</span>
               </div>
               <div className="flex flex-wrap gap-2">
                 <CommandDialog
                   trigger={
                     <span className="inline-flex items-center justify-center rounded-full bg-foreground px-4 py-1.5 text-sm font-medium text-background hover:bg-foreground/85 transition-colors cursor-pointer">
-                      Install
+                      Copy Command
                     </span>
                   }
                   title="Install via Homebrew"
                   command="brew tap Snenjih/tap && brew install --cask labonair"
+                  footnote="Homebrew removes the macOS quarantine attribute automatically. Update with brew upgrade labonair"
                 />
               </div>
             </div>
           </div>
-
-          <p className="text-xs text-muted-foreground mt-4">
-            Homebrew removes the macOS quarantine attribute automatically. Update with{" "}
-            <code className="font-mono">brew upgrade labonair</code>.
-          </p>
         </section>
 
         <p className="text-center text-xs text-muted-foreground mt-8">
